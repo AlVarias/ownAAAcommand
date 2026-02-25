@@ -1,0 +1,14 @@
+
+Folder highlights
+Instructions detail Unix system administration for web servers (NGINX/Apache, MySQL/MariaDB) and YAccess installation, including network setup and file permissions.
+
+less /etc/udev/rules.d/70-persistent-net.rules
+rm /etc/udev/rules.d/70-persistent-net.rules
+reboot
+vi /etc/udev/rules.d/70-persistent-net.rules
+
+change eth1 to eth0
+reboot
+
+change the ip 
+reboot
