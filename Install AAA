@@ -1,0 +1,242 @@
+
+Folder highlights
+Instructions detail Unix system administration for web servers (NGINX/Apache, MySQL/MariaDB) and YAccess installation, including network setup and file permissions.
+
+-----------------------------------INSTALLATION YAccess---------------------------------------------------------
+
+
+======================Server Web===============================================================================
+
+**********NGINX************************************************************************
+yum install epel-release -y
+
+yum update -y
+
+yum install nginx -y
+
+service nginx restart
+service iptables stop
+
+chkconfig iptables off
+chkconfig nginx on
+
+
+***********PHP56****************************************************************
+
+wget http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+
++++**If you already have EPEL installed:**++
+
+wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+rpm -Uvh remi-release-6*.rpm
+
+
+++**edit remi.repo
+
+vi /etc/yum.repos.d/remi.repo
+
+yum update -y
+
+yum install php php-gd php-mysql php-mcrypt -y
+
+
+************php-fpm************************************************************
+
+yum install php-fpm -y
+
+service php-fpm restart
+chkconfig php-fpm on
+
+
+===================================Server DB=============================================================
+
+*******MariaDB*****************************************************************
+
+yum -y update
+
+
+vi /etc/yum.repos.d/MariaDB.repo
+
+//note for 64bit only
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/5.5/centos6-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+yum install MariaDB-server MariaDB-client -y
+
+
+service mysql start
+mysql_secure_installation
+
+service mysql restart
+
+mysql -u root -p
+
+
+chkconfig mysql on
+service iptables stop
+chkconfig iptables off
+
+
+**********flush ng privillage ng name or root********************************
+
+/etc/init.d/mysql stop
+
+mysqld_safe --skip-grant-tables &
+
+mysql -u root -p
+
+use mysql;
+
+update user set password=PASSWORD("f!lAsia888") where User='root';
+
+FLUSH PRIVILEGES;
+
+exit
+
+
+service mysql restart
+
+
+**************flushprivillage IP********************************************
+
+mysql -u root -p
+
+use mysql;
+
+GRANT ALL ON *.* to root@'192.168.60.1' IDENTIFIED BY 'f!lAsia888';
+
+FLUSH PRIVILEGES;
+
+exit
+
+service mysql restart
+
+
+*****install perl***********************************************************
+yum install perl
+
+
+
+*****************Create User & Database***************************************
+
+copy files 'readme' 'yaccessDB.sql' /home of any working DBserver of yaccess
+
+mysql -u root -p
+
+source readme;
+
+show databases;
+
+create database yaccessDB;
+
+use yaccessDB;
+
+source yaccessDB.sql;
+
+---------------------------
+go test AAA if can connect |
+---------------------------
+==================================Server AAA====================================================================
+
+*******first step************************************************************
+put the tar file of YAccess in /home 
+
+
+****Unzip File***************************************************************
+tar zcvf yaccess-backup.tar.gz yaccess  //zip the file
+tar xzvf yaccess1.tar.gz		//unzip the file
+
+
+"""""note""""""""""""""""""""""""""""
+z = filter the archive through gzip "
+x = extract files from an archive   "
+v = verbosely list files processed  "
+f = file, use archive file          "
+c = create a new archive.           "
+"""""""""""""""""""""""""""""""""""""
+
+*********Enforce the system***************************************************
+getenforce
+setenforce 0
+
+
+****install Mysql Client******************************************************
+vi /etc/yum.repos.d/MariaDB.repo
+
+yum -y update
+yum install MariaDB-client -y
+
+
+*****initialize the file*******************************************************
+/home/yaccess                   //go here
+./initialize			// para lumabas ung radius
+
+reboot
+
+
+
+*****Connect to Mysql and Setup AAA to DB**************************************
+mysql -u yaccess -h 192.168.60.102 -p
+
+vi sql.conf
+---dontforget to put DBname lower down---------
+
+
+
+****Start YAccess**************************************************************
+./yaccess start
+
+
+****if mag ka error sa owner ship**********************************************
+chown radiusd:radiusd /home/yaccess/run/radiusd/
+
+
+********pang radius -X*********************************************************
+/home/yaccess/sbin/radiusd -d /home/yaccess/ -X
+
+ps -aux | grep radius		 //show ng running radius
+
+kill 1111           		 //pang kill nung sho radius running
+
+
+
+
+
+
+
+
+
+********Para di na tayo mag type ng mahaba gawa tayo script********************
+
+cp initialize {filename na trip mo}
+
+
+
+
+****debug a users error*************************
+less radius-notice.log | grep edwin
+
+
+****Log Error*****************************
+less radius-errors.log
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
