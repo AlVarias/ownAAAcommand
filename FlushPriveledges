@@ -1,0 +1,36 @@
+
+Folder highlights
+Instructions detail Unix system administration for web servers (NGINX/Apache, MySQL/MariaDB) and YAccess installation, including network setup and file permissions.
+
+Flush Priveledges(centos)
+
+
+/etc/init.d/mysqld stop
+
+mysqld_safe --skip-grant-tables &
+
+mysql -uroot
+
+use mysql;
+
+update user set password=PASSWORD("f!lAsia888") where User='root';
+
+
+
+flush privileges;
+
+quit
+
+/etc/init.d/mysqld stop
+ /etc/init.d/mysqld start
+
+
+-----IP is allowed to flush ----
+
+mysql -u root -p
+
+use mysql
+
+GRANT ALL ON *.* to root@'192.168.60.1' IDENTIFIED BY 'f!lAsia888';
+
+FLUSH PRIVILEGES;
