@@ -1,0 +1,187 @@
+
+Folder highlights
+Instructions detail Unix system administration for web servers (NGINX/Apache, MySQL/MariaDB) and YAccess installation, including network setup and file permissions.
+
+=========================================================================================
+*******MariaDB************
+
+yum -y update
+
+
+vi /etc/yum.repos.d/MariaDB.repo
+
+//note for 64bit only
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/10.0/centos6-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+
+
+yum install MariaDB-server MariaDB-client -y
+
+
+service mysql start
+mysql_secure_installation
+
+service mysql restart
+
+mysql -u root -p
+
+
+chkconfig mysql on
+service iptables stop
+chkconfig iptables off
+
+======================================================================================
+********Create DataBase and User******************************************************
+
+create databases fastmail;
+
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'f!lAsia888';
+
+GRANT ALL PRIVILEGES ON * . * TO 'admin'@'localhost';
+FLUSH PRIVILEGES;
+
+exit
+
+======================================================================================
+************flush ng privillage ng name or root*******************
+
+/etc/init.d/mysql stop
+
+mysqld_safe --skip-grant-tables &
+
+mysql -u root -p
+
+use mysql;
+
+update user set password=PASSWORD("f!lAsia888") where User='root';
+
+FLUSH PRIVILEGES;
+
+exit
+
+
+service mysql restart
+
+
+=================================================================================
+**************flushprivillage IP******************
+
+mysql -u root -p
+
+use mysql;
+
+GRANT ALL ON *.* to admin@'192.168.60.95' IDENTIFIED BY 'f!lAsia888';
+
+FLUSH PRIVILEGES;
+
+exit
+
+service mysql restart
+
+********clear history***********************************
+rm -f ~/.mysql_history
+
+
+====================================================================================
+************** export databases************************
+mysqldump -u root -p dolibarr > dolibarr_db_backup_'date+%Y%m%d_%H%M%S'.sql
+
+
+************** import databases************************
+
+create database dolibarr;
+
+user dolibarr;
+
+select database();
+
+source dolibarr_db_backup.sql;
+
+
+====================================================================================
+**************NGINX*******************
+
+yum install epel-release
+
+yum update -y
+
+yum install nginx
+
+service nginx restart
+service iptables stop
+
+chkconfig iptables off
+chkconfig nginx on
+
+====================================================================================
+*******************APACHE********************************
+
+yum install httpd -y
+
+
+service httpd restart
+service iptables stop
+
+chkconfig iptables off
+chkconfig httpd on
+
+
+=================================================================================
+***********PHP56**********************
+
+wget http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm
+wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
+
++++**If you already have EPEL installed:
+
+wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+rpm -Uvh remi-release-6*.rpm
+
+
+++**edit remi.repo
+
+vi /etc/yum.repos.d/remi.repo
+
+
+yum install php php-gd php-mysql php-mcrypt
+
+
+================================================================================
+*****php extension (laravel)***********
+
+yum install php-mbstring -y
+
+
+
+
+================================================================================
+*********delete mysql***************
+
+service mysqld stop
+
+yum list installed | grep mysql 
+yum list installed *mysql*
+
+ rpm -qa 'mysql*'
+
+yum remove mysql-client mysql-server mysql-common mysql-devel
+
+rm -Rf /var/lib/mysql                                     
+
+yum remove *mysql*
+
+yum clean all
+
+
+
+
+
+
+
+
+
+
